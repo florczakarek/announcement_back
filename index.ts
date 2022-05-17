@@ -12,9 +12,9 @@ app.use(
 );
 app.use(express.json());
 
-app.get('/', async (req, res) => {
-  throw new ValidationError('Error jus came in');
-});
+// app.get('/', async (req, res) => {
+//   throw new ValidationError('Error jus came in');
+// });
 
 app.use(handleError);
 
