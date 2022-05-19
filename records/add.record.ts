@@ -2,6 +2,7 @@ import { FieldPacket } from 'mysql2';
 import { AdEntity, NewAdEntity, SimpleAddEntity } from '../types';
 import { pool } from '../utils/db';
 import { ValidationError } from '../utils/error';
+import { v4 as uuid } from 'uuid';
 
 type AdRecordResults = [AdEntity[], FieldPacket[]];
 
@@ -72,5 +73,18 @@ export class AdRecord implements AdEntity {
       const { id, lat, lon } = result;
       return { id, lat, lon };
     });
+  }
+
+  async insert(): Promise<void> {
+    if (!this.id) {
+      this.id = uuid();
+    } else {
+      throw new Error(`${this.id} already exists`);
+    }
+
+    await pool.execute(
+      'INSERT INTO `announcements` (`id`, `name`, `description`, `price`, `url`, `lat`, `lon`) VALUES(:id, :name, :description, :price, :url, :lat, :lon)',
+      this
+    );
   }
 }

@@ -2,6 +2,15 @@ import { AdRecord } from '../records/add.record';
 import { AdEntity } from '../types';
 import { pool } from '../utils/db';
 
+const defaultRecord = {
+  name: 'test',
+  description: 'test description',
+  url: 'http://example.com',
+  price: 10,
+  lat: 10,
+  lon: 10,
+};
+
 afterAll(async () => {
   await pool.end();
 });
@@ -45,4 +54,22 @@ test('AdRecord.findAll returns small piece of data (only id, lon, lat)', async (
   const ads = await AdRecord.findAll('');
 
   expect((ads[0] as AdEntity).price).toBeUndefined();
+});
+
+test('AdRecord.insert returns new UUID', async () => {
+  const ad = new AdRecord(defaultRecord);
+  await ad.insert();
+
+  expect(ad.id).toBeDefined();
+  expect(typeof ad.id).toBe('string');
+});
+
+test('AdRecord.insert inserts new data to DB', async () => {
+  const ad = new AdRecord(defaultRecord);
+  await ad.insert();
+
+  const foundAd = await AdRecord.getOne(ad.id);
+  expect(foundAd).toBeDefined();
+  expect(foundAd).not.toBeNull();
+  expect(foundAd.id).toBe(ad.id);
 });
