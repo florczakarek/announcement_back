@@ -3,6 +3,7 @@ import cors from 'cors';
 import 'express-async-errors';
 import { handleError, ValidationError } from './utils/error';
 import { rateLimit } from 'express-rate-limit';
+import { adRouter } from './routes/ad.router';
 
 const app = express();
 
@@ -19,9 +20,7 @@ app.use(
   })
 );
 
-// app.get('/', async (req, res) => {
-//   throw new ValidationError('Error jus came in');
-// });
+app.use('/ads', adRouter);
 
 app.use(handleError);
 
